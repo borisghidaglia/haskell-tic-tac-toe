@@ -2,6 +2,6 @@ import DataTypes
   (Player (..)
   , listToBoard
   )
-import UI
+import Utils
 
-main = print $ listToBoard [Circle | x <- [1..9]]
+main = rawPrint $ listToBoard [Circle | x <- [1..9]]
