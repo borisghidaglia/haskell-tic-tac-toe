@@ -3,11 +3,12 @@ module DataTypes
   , listToBoard
   ) where
 
-data Player = Cross | Circle
+data Player = Cross | Circle | Empty
 
 instance Show Player where
   show Cross = "X"
   show Circle = "O"
+  show Empty = "_"
 
 makeLine :: [Player] -> String
 makeLine ps = x ++ "\n\n" where
