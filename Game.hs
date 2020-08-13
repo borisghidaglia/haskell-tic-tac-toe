@@ -1,7 +1,10 @@
 import DataTypes
   (Player (..)
+  , nextPlayer
+  , Board (..)
   , listToBoard
   , boardSize
+  , Position
   )
 import UI
 import Utils
@@ -10,18 +13,24 @@ initialBoard = listToBoard [Empty | x <- [1..9]]
 
 main = play initialBoard
 
-play :: Show a => Maybe a -> IO ()
+play :: Maybe Board -> IO ()
 play (Just b) = do
   putStrLn "Welcome in this tic-tac-toe game !"
-  gameLoop
+  gameLoop b Cross
 play Nothing = putStrLn "Board is invalid."
 
-gameLoop :: IO ()
-gameLoop = do
+gameLoop :: Board -> Player -> IO ()
+gameLoop b p = do
+  putStrLn $ "\n" ++ show b
   n <- askInt
   case checkPosition n of
-    Just n  -> putStrLn $ show n
+    Just n  -> case setMark b p n of
+      Just b' -> gameLoop b' p' where
+        p' = nextPlayer p
     Nothing -> putStrLn $ "Position is invalid. Please enter a number between 1 and " ++ show boardSize
 
-checkPosition :: Int -> Maybe Int
+checkPosition :: Int -> Maybe Position
 checkPosition n = if n <= boardSize && n > 0 then Just n else Nothing
+
+setMark :: Board -> Player -> Position -> Maybe Board
+setMark (Board ps) p n = listToBoard [if i == n then p else v | (v, i) <- zip ps [1..boardSize]]

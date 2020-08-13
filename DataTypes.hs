@@ -1,10 +1,13 @@
 module DataTypes
   (Player (..)
+  , nextPlayer
+  , Board (..)
   , listToBoard
   , boardSize
+  , Position
   ) where
 
-data Player = Cross | Circle | Empty
+data Player = Cross | Circle | Empty deriving (Eq)
 
 instance Show Player where
   show Cross = "X"
@@ -15,9 +18,11 @@ makeLine :: [Player] -> String
 makeLine ps = x ++ "\n\n" where
   x = unwords [" " ++ show p ++ " " | p <- ps]
 
+nextPlayer :: Player -> Player
+nextPlayer p = if p == Cross then Circle else Cross
 
-boardSize = 3^2
 newtype Board = Board [Player]
+boardSize = 3^2
 
 instance Show Board where
   show = showBoard
@@ -30,3 +35,6 @@ showBoard (Board []) = []
 showBoard (Board ps) = x ++ y where
   x = makeLine $ take 3 ps
   y = showBoard (Board (drop 3 ps))
+
+
+type Position = Int
