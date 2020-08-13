@@ -1,6 +1,7 @@
 module DataTypes
   (Player (..)
   , listToBoard
+  , boardSize
   ) where
 
 data Player = Cross | Circle | Empty
