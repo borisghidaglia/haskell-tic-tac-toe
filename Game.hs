@@ -24,15 +24,20 @@ gameLoop b p = do
   putStrLn $ "\n" ++ show b
   n <- askInt
   case checkPosition n of
-    Just n  -> case setMark b p n of
-      Just b' -> gameLoop b' p' where
-        p' = nextPlayer p
+    Just n -> case setMark b p n of
+      Just b' -> case checkBoard b' of
+        Nothing -> putStrLn $ "Player " ++ show p ++ " won !"
+        Just sb -> gameLoop sb p' where
+          p' = nextPlayer p
       Nothing -> do
         putStrLn $ "Board is invalid."
         gameLoop b p
     Nothing -> do
       putStrLn $ "Position is invalid. Please enter a number between 1 and " ++ show boardSize
       gameLoop b p
+
+checkBoard :: Board -> Maybe Board
+checkBoard (Board ps) = if ps !! 1 == Cross then Just (Board ps) else Nothing
 
 checkPosition :: Int -> Maybe Position
 checkPosition n = if n <= boardSize && n > 0 then Just n else Nothing
