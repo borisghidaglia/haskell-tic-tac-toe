@@ -28,11 +28,11 @@ gameLoop b p = do
   case checkPosition n of
     Just n -> case setMark b p n of
       Just b' -> case checkBoard b' p of
+        Just sb -> gameLoop sb p' where
+          p' = nextPlayer p
         Nothing -> do
           print b'
           putStrLn $ "Player " ++ show p ++ " won !"
-        Just sb -> gameLoop sb p' where
-          p' = nextPlayer p
       Nothing -> do
         putStrLn $ "Board is invalid."
         gameLoop b p
