@@ -17,13 +17,13 @@ main = play initialBoard
 
 play :: Maybe Board -> IO ()
 play (Just b) = do
-  putStrLn "Welcome in this tic-tac-toe game !"
+  putStrLn "\n\nWelcome in this tic-tac-toe game !"
   gameLoop b Cross
 play Nothing = putStrLn "Board is invalid."
 
 gameLoop :: Board -> Player -> IO ()
 gameLoop b p = do
-  putStrLn $ "\n" ++ show b
+  putStrLn $ "\nIt's " ++ show p ++ " turn.\n" ++ show b
   n <- askInt
   case checkPosition n of
     Just n' -> case setMark b p n' of
@@ -34,10 +34,10 @@ gameLoop b p = do
           print b'
           putStrLn $ "Player " ++ show p ++ " won !"
       Nothing -> do
-        putStrLn $ "Board is invalid."
+        putStrLn $ show n' ++ " is already taken! Please pick something else."
         gameLoop b p
     Nothing -> do
-      putStrLn $ "Position is invalid. Please enter a number between 1 and " ++ show boardSize
+      putStrLn $ "Please enter a number between 1 and " ++ show boardSize
       gameLoop b p
 
 checkBoard :: Board -> Player -> Maybe Board
@@ -61,4 +61,7 @@ checkPosition :: Int -> Maybe Position
 checkPosition n = if n <= boardSize && n > 0 then Just n else Nothing
 
 setMark :: Board -> Player -> Position -> Maybe Board
-setMark (Board ps) p n = listToBoard [if i == n then p else v | (v, i) <- zip ps [1..boardSize]]
+setMark (Board ps) p n =
+  if ps !! (n - 1) == Empty
+  then listToBoard [if i == n then p else v | (v, i) <- zip ps [1..boardSize]]
+  else Nothing
