@@ -46,11 +46,11 @@ checkBoard b@(Board ps) p =
   then Nothing
   else Just (Board ps)
   where
-    fc          = [0, boardSide..boardSize-1]
+    aT     = any (==True)
     cp          = checkPattern b p
-    checkCols   = cp fc
-    checkLines  = any (==True) [cp [x..x+boardSide-1] | x <- fc]
-    checkDiags  = any (==True) [cp x | x <- [[0, 4, 8], [2, 4, 6]]]
+    checkCols   = aT [cp [x, x+boardSide..boardSize-1] | x <- [0..boardSide-1]]
+    checkLines  = aT [cp [x..x+boardSide-1] | x <- [0, boardSide..boardSize-1]]
+    checkDiags  = aT [cp x | x <- [[0, 4, 8], [2, 4, 6]]]
 
 checkPattern :: Board -> Player -> [Int] -> Bool
 checkPattern (Board ps) p xs = length (filter (\x -> ps !! x == p) xs) == boardSide
