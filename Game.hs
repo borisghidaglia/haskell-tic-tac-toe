@@ -27,7 +27,12 @@ gameLoop b p = do
     Just n  -> case setMark b p n of
       Just b' -> gameLoop b' p' where
         p' = nextPlayer p
-    Nothing -> putStrLn $ "Position is invalid. Please enter a number between 1 and " ++ show boardSize
+      Nothing -> do
+        putStrLn $ "Board is invalid."
+        gameLoop b p
+    Nothing -> do
+      putStrLn $ "Position is invalid. Please enter a number between 1 and " ++ show boardSize
+      gameLoop b p
 
 checkPosition :: Int -> Maybe Position
 checkPosition n = if n <= boardSize && n > 0 then Just n else Nothing
