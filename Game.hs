@@ -3,11 +3,13 @@ import DataTypes
   , nextPlayer
   , Board (..)
   , listToBoard
+  , boardSide
   , boardSize
   , Position
   )
 import UI
 import Utils
+import Debug.Trace
 
 initialBoard = listToBoard [Empty | x <- [1..9]]
 
@@ -25,8 +27,10 @@ gameLoop b p = do
   n <- askInt
   case checkPosition n of
     Just n -> case setMark b p n of
-      Just b' -> case checkBoard b' of
-        Nothing -> putStrLn $ "Player " ++ show p ++ " won !"
+      Just b' -> case checkBoard b' p of
+        Nothing -> do
+          print b'
+          putStrLn $ "Player " ++ show p ++ " won !"
         Just sb -> gameLoop sb p' where
           p' = nextPlayer p
       Nothing -> do
@@ -36,8 +40,20 @@ gameLoop b p = do
       putStrLn $ "Position is invalid. Please enter a number between 1 and " ++ show boardSize
       gameLoop b p
 
-checkBoard :: Board -> Maybe Board
-checkBoard (Board ps) = if ps !! 1 == Cross then Just (Board ps) else Nothing
+checkBoard :: Board -> Player -> Maybe Board
+checkBoard b@(Board ps) p =
+  if checkCols || checkLines || checkDiags
+  then Nothing
+  else Just (Board ps)
+  where
+    fc          = [0, boardSide..boardSize-1]
+    cp          = checkPattern b p
+    checkCols   = cp fc
+    checkLines  = any (==True) [cp [x..x+boardSide-1] | x <- fc]
+    checkDiags  = any (==True) [cp x | x <- [[0, 4, 8], [2, 4, 6]]]
+
+checkPattern :: Board -> Player -> [Int] -> Bool
+checkPattern (Board ps) p xs = length (filter (\x -> ps !! x == p) xs) == boardSide
 
 checkPosition :: Int -> Maybe Position
 checkPosition n = if n <= boardSize && n > 0 then Just n else Nothing

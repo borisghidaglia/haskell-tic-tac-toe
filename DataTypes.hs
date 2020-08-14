@@ -3,6 +3,7 @@ module DataTypes
   , nextPlayer
   , Board (..)
   , listToBoard
+  , boardSide
   , boardSize
   , Position
   ) where
@@ -21,8 +22,12 @@ makeLine ps = x ++ "\n\n" where
 nextPlayer :: Player -> Player
 nextPlayer p = if p == Cross then Circle else Cross
 
+
+
 newtype Board = Board [Player]
-boardSize = 3^2
+
+boardSide = 3
+boardSize = boardSide^2
 
 instance Show Board where
   show = showBoard
@@ -35,6 +40,7 @@ showBoard (Board []) = []
 showBoard (Board ps) = x ++ y where
   x = makeLine $ take 3 ps
   y = showBoard (Board (drop 3 ps))
+
 
 
 type Position = Int
