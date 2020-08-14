@@ -27,7 +27,7 @@ nextPlayer p = if p == Cross then Circle else Cross
 newtype Board = Board [Player]
 
 boardSide :: Int
-boardSide = 3
+boardSide = 10
 boardSize :: Int
 boardSize = boardSide * boardSide
 
@@ -40,8 +40,8 @@ listToBoard xs = if length xs == boardSize then Just (Board xs) else Nothing
 showBoard :: Board -> String
 showBoard (Board []) = []
 showBoard (Board ps) = x ++ y where
-  x = makeLine $ take 3 ps
-  y = showBoard (Board (drop 3 ps))
+  x = makeLine $ take boardSide ps
+  y = showBoard (Board (drop boardSide ps))
 
 
 

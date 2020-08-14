@@ -10,7 +10,7 @@ import DataTypes
 import UI
 
 initialBoard :: Maybe Board
-initialBoard = listToBoard [Empty | _ <- [1..9]]
+initialBoard = listToBoard [Empty | _ <- [1..boardSize]]
 
 main :: IO ()
 main = play initialBoard
