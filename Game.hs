@@ -8,11 +8,11 @@ import DataTypes
   , Position
   )
 import UI
-import Utils
-import Debug.Trace
 
-initialBoard = listToBoard [Empty | x <- [1..9]]
+initialBoard :: Maybe Board
+initialBoard = listToBoard [Empty | _ <- [1..9]]
 
+main :: IO ()
 main = play initialBoard
 
 play :: Maybe Board -> IO ()
@@ -26,7 +26,7 @@ gameLoop b p = do
   putStrLn $ "\n" ++ show b
   n <- askInt
   case checkPosition n of
-    Just n -> case setMark b p n of
+    Just n' -> case setMark b p n' of
       Just b' -> case checkBoard b' p of
         Just sb -> gameLoop sb p' where
           p' = nextPlayer p

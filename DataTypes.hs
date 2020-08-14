@@ -26,8 +26,10 @@ nextPlayer p = if p == Cross then Circle else Cross
 
 newtype Board = Board [Player]
 
+boardSide :: Int
 boardSide = 3
-boardSize = boardSide^2
+boardSize :: Int
+boardSize = boardSide * boardSide
 
 instance Show Board where
   show = showBoard
