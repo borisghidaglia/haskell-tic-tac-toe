@@ -46,7 +46,7 @@ checkBoard b@(Board ps) p =
   then Nothing
   else Just (Board ps)
   where
-    aT          = any (==True)
+    aT          = elem True
     cp          = checkPattern b p
     leftD       = [x + y | (x,y) <- zip [0, boardSide..boardSize-1] [0..boardSide-1]]
     rightD      = [x - y | (x,y) <- zip [boardSide, boardSide*2..boardSize] [1..boardSide]]
