@@ -6,6 +6,8 @@ import DataTypes
   , boardSide
   , boardSize
   , Position
+  , GameError (..)
+  , GameEvent (..)
   )
 import UI
 
@@ -24,27 +26,17 @@ play Nothing = putStrLn "Board is invalid."
 gameLoop :: Board -> Player -> IO ()
 gameLoop b p = do
   putStrLn $ "\nIt's " ++ show p ++ " turn.\n" ++ show b
-  n <- askInt
-  case checkPosition n of
-    Just n' -> case setMark b p n' of
-      Just b' -> case checkBoard b' p of
-        Just sb -> gameLoop sb p' where
-          p' = nextPlayer p
-        Nothing -> do
-          print b'
-          putStrLn $ "Player " ++ show p ++ " won !"
-      Nothing -> do
-        putStrLn $ show n' ++ " is already taken! Please pick something else."
-        gameLoop b p
-    Nothing -> do
-      putStrLn $ "Please enter a number between 1 and " ++ show boardSize
-      gameLoop b p
+  case gameChain of
+    Right b -> gameLoop b $ nextPlayer p
+    Left e -> print e
+  where
+    gameChain = askInt >>= checkPosition >>= setMark b p >>= checkBoard p
 
-checkBoard :: Board -> Player -> Maybe Board
-checkBoard b@(Board ps) p =
+checkBoard :: Player -> Board -> Either GameEvent Board
+checkBoard p b =
   if checkCols || checkLines || checkDiags
-  then Nothing
-  else Just (Board ps)
+  then Left GameEnds "Player " ++ show p ++ " won !"
+  else Right b
   where
     aT          = elem True
     cp          = checkPattern b p
@@ -57,11 +49,11 @@ checkBoard b@(Board ps) p =
 checkPattern :: Board -> Player -> [Int] -> Bool
 checkPattern (Board ps) p xs = length (filter (\x -> ps !! x == p) xs) == boardSide
 
-checkPosition :: Int -> Maybe Position
-checkPosition n = if n <= boardSize && n > 0 then Just n else Nothing
+checkPosition :: Int -> Either GameError Position
+checkPosition n = if n <= boardSize && n > 0 then Right n else Left $ OutOfBoard $ "Please enter a number between 1 and " ++ show boardSize
 
-setMark :: Board -> Player -> Position -> Maybe Board
+setMark :: Board -> Player -> Position -> Either GameError Board
 setMark (Board ps) p n =
   if ps !! (n - 1) == Empty
-  then listToBoard [if i == n then p else v | (v, i) <- zip ps [1..boardSize]]
-  else Nothing
+  then Right $ listToBoard [if i == n then p else v | (v, i) <- zip ps [1..boardSize]]
+  else Left $ AlreadyTaken $ show n ++ " is already taken! Please pick something else."

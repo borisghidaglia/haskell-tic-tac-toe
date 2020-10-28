@@ -6,6 +6,8 @@ module DataTypes
   , boardSide
   , boardSize
   , Position
+  , GameError (..)
+  , GameEvent (..)
   ) where
 
 data Player = Cross | Circle | Empty deriving (Eq)
@@ -46,3 +48,10 @@ showBoard (Board ps) = x ++ y where
 
 
 type Position = Int
+
+
+data GameError  = OutOfBoard String
+                | AlreadyTaken String
+
+data GameEvent  = GameError
+                | GameEnds String
